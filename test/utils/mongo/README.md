@@ -1,0 +1,1 @@
+environment.js, setup.js, and teardown.js are provided by the example jest mongo setup which can be found at [https://jestjs.io/docs/en/mongodb#a-jest-mongodb-example](https://jestjs.io/docs/en/mongodb#a-jest-mongodb-example)
