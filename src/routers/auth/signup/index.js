@@ -18,6 +18,9 @@ export default async function(req, res) {
     .then(({token}) => {
       res.status(200)
         .cookie('token', token, new JwtCookieOptions())
+        .cookie('authenticated', 'true', new JwtCookieOptions(
+          {httpOnly: false}
+        ))
         .send(req.body);
     })
     .catch(({messages, status}) => {

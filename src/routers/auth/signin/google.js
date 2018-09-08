@@ -13,11 +13,14 @@ function attachNewJWT(res, email) {
   const token = createJWT({email});
 
   return res
-    .cookie('token', token, new JwtCookieOptions());
+    .cookie('token', token, new JwtCookieOptions())
+    .cookie('authenticated', 'true', new JwtCookieOptions(
+      {httpOnly: false}
+    ));
 }
 
 /**
- * FULL ROUTE: POST /api/login/google
+ * FULL ROUTE: POST /api/signin/google
  *
  * Recieve data from clientside google signin. User can be signed up if it's
  * their first time logging in or just logged in.
@@ -91,6 +94,9 @@ export default async function(req, res, next) {
     }).then(({token}) => {
       res.status(200)
         .cookie('token', token, new JwtCookieOptions())
+        .cookie('authenticated', 'true', new JwtCookieOptions(
+          {httpOnly: false}
+        ))
         .send({
           newUser: true,
         });

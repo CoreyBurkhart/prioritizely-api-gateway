@@ -2,9 +2,9 @@
 
 import express from 'express';
 import signupHandler from './signup';
-import classicLoginHandler from './login/classic';
-import googleLoginHandler from './login/google';
-import logoutHandler from './logout';
+import classicsigninHandler from './signin/classic';
+import googlesigninHandler from './signin/google';
+import signoutHandler from './signout';
 
 const router = express.Router();
 
@@ -12,8 +12,8 @@ const router = express.Router();
  * Full route = "/api/auth/..."
  */
 router.post('/signup', signupHandler);
-router.post('/login', classicLoginHandler);
-router.post('/login/google', googleLoginHandler);
-router.get('/logout', logoutHandler);
+router.post('/signin', classicsigninHandler);
+router.post('/signin/google', googlesigninHandler);
+router.get('/signout', signoutHandler);
 
 export default router;

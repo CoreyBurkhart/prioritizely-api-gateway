@@ -1,6 +1,5 @@
-// require('dotenv').config()
+require('dotenv').config()
 require('./get-jwt-key.js');
-require('./get-google-path.js');
 const env = process.env.NODE_ENV;
 
 const development = {

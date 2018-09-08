@@ -2,8 +2,8 @@ import mongoose from 'mongoose';
 import app from '@/app';
 import request from 'supertest';
 
-const LoginValidPayload = {
-  email: 'logintestuser@test.com',
+const signinValidPayload = {
+  email: 'signintestuser@test.com',
   password: 'elephantsarecool!',
 };
 
@@ -18,7 +18,7 @@ beforeAll(async () => {
     .set('Content-Type', 'application/json')
     .set('Accept', 'application/json')
     .send(
-      JSON.stringify(Object.assign(LoginValidPayload, {name: 'fist last'}))
+      JSON.stringify(Object.assign(signinValidPayload, {name: 'fist last'}))
     );
 });
 
@@ -30,17 +30,17 @@ afterAll(async () => {
  * @param {Object} payload this will get stringified!
  * @return {Object}
  */
-function callLoginRoute(payload) {
+function callsigninRoute(payload) {
   return request(app)
-    .post('/api/auth/login')
+    .post('/api/auth/signin')
     .set('Content-Type', 'application/json')
     .set('Accept', 'application/json')
     .send(JSON.stringify(payload));
 }
 
-describe('Login Flow', () => {
+describe('signin Flow', () => {
   it('Logs user in given correct credentials.', (done) => {
-    callLoginRoute(LoginValidPayload)
+    callsigninRoute(signinValidPayload)
       .then((res) => {
         expect(res.body).toBe(true);
         expect(/token=.+;/i.test(res.header['set-cookie'])).toBe(true);
@@ -48,8 +48,8 @@ describe('Login Flow', () => {
       });
   });
 
-  it('Rejects a login w/ incorrect email.', (done) => {
-    callLoginRoute({
+  it('Rejects a signin w/ incorrect email.', (done) => {
+    callsigninRoute({
       email: 'doesntexist@test.com',
       password: 'validpassword!',
     })
@@ -60,9 +60,9 @@ describe('Login Flow', () => {
       });
   });
 
-  it('Rejects a login w/ incorrect password & correct email.', (done) => {
-    callLoginRoute({
-      email: 'logintestuser@test.com',
+  it('Rejects a signin w/ incorrect password & correct email.', (done) => {
+    callsigninRoute({
+      email: 'signintestuser@test.com',
       password: 'validpassword!',
     })
       .then((res) => {
@@ -74,7 +74,7 @@ describe('Login Flow', () => {
 
   it('Logs us out correctly.', (done) => {
     request(app)
-      .get('/api/auth/logout')
+      .get('/api/auth/signout')
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
       .send()

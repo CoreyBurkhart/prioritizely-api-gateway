@@ -13,7 +13,7 @@ export default class JwtCookieOptions {
        sameSite} = options;
     this.path = path || '/';
     this.secure = secure || process.env.NODE_ENV === 'production';
-    this.httpOnly = httpOnly || true;
+    this.httpOnly = typeof httpOnly === 'boolean' ? httpOnly : true;
     // default expiration date = one month
     this.expires = expires || (new Date(Date.now() + 1000 * 60 * 60 * 24 * 30));
     if (encode) this.encode = encode;

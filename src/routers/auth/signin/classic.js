@@ -3,10 +3,10 @@
 import UserModel from '../../../db/models/User';
 import bcrypt from 'bcrypt';
 import {createJWT, respondInvalidCred} from '../../../lib/auth';
-import JwtCookieOtions from './../../../lib/classes/JwtCookieOptions';
+import JwtCookieOptions from './../../../lib/classes/JwtCookieOptions';
 
 /**
- * FULL ROUTE: POST /api/login
+ * FULL ROUTE: POST /api/signin
  *
  * Verify that user exists, and that password hashes match.
  * @param {Object} req
@@ -36,7 +36,10 @@ export default async function(req, res, next) {
 
       if (token) {
         res.status(200)
-          .cookie('token', token, new JwtCookieOtions())
+          .cookie('token', token, new JwtCookieOptions())
+          .cookie('authenticated', 'true', new JwtCookieOptions(
+            {httpOnly: false}
+          ))
           .send(true);
       }
     } else {
