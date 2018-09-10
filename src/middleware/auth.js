@@ -1,6 +1,17 @@
 import jwt from 'jsonwebtoken';
 
 /**
+ * @param {Object} res
+ * @return {Object}
+ */
+function clearAndRedirect(res) {
+  return res
+    .clearCookie('token')
+    .clearCookie('authenticated')
+    .redirect('/signin');
+}
+
+/**
  * @summary protect from unauthenticated reqests.
  * @description
  *  - redirect to signin if not authenticated.
@@ -15,12 +26,13 @@ export default function(req, res, next) {
   const {token} = req.cookies;
 
   if (token) {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.decoded_token = decoded;
-    return next();
+    try {
+      jwt.verify(token, process.env.JWT_SECRET);
+      next();
+    } catch (e) {
+      return clearAndRedirect(res);
+    }
+  } else {
+    return clearAndRedirect(res);
   }
-
-  return res.clearCookie('token')
-    .clearCookie('authenticated')
-    .redirect('/signin');
 }

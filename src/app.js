@@ -36,7 +36,7 @@ app.use('/api/auth', authRouter);
 /*
  * proxy
  */
-app.use('/api/test', defaultProxy);
+app.use(/\/api(?!\/auth)/, defaultProxy);
 
 /*
  * error middleware (must be last call to app.use)
