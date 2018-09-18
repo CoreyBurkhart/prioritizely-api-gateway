@@ -1,5 +1,5 @@
 import UserModel from './../../../db/models/User';
-import {createJWT, hashPassword} from '../../../lib/auth';
+import {hashPassword} from '../../../lib/auth';
 import {INVALID_PASSWORD, NON_UNIQUE_EMAIL} from '../../../lib/error-messages';
 import trim from 'validator/lib/trim';
 
@@ -44,11 +44,8 @@ export default async function(userData) {
     }
 
     user.save()
-      .then(() => {
-        const token = createJWT({
-          email,
-        });
-        resolve({token});
+      .then((user) => {
+        resolve({user});
       })
       .catch((err) => {
         if (err.errors) {

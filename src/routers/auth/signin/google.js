@@ -1,23 +1,7 @@
 import jwt from 'jsonwebtoken';
 import UserModel from './../../../db/models/User';
-import {createJWT, validateGoogleIdToken} from '../../../lib/auth';
-import JwtCookieOptions from '../../../lib/classes/JwtCookieOptions';
+import {validateGoogleIdToken} from '../../../lib/auth';
 import signupUser from './../signup/signup';
-
-/**
- * @param {Object} res
- * @param {String} email
- * @return {Object} res
- */
-function attachNewJWT(res, email) {
-  const token = createJWT({email});
-
-  return res
-    .cookie('token', token, new JwtCookieOptions())
-    .cookie('authenticated', 'true', new JwtCookieOptions(
-      {httpOnly: false}
-    ));
-}
 
 /**
  * FULL ROUTE: POST /api/signin/google
@@ -49,6 +33,8 @@ export default async function(req, res, next) {
     next(err);
   }
 
+  const {_id: uId} = user;
+
   if (user && token) {
     // make sure their token matches the current account
     let decoded;
@@ -56,30 +42,29 @@ export default async function(req, res, next) {
       decoded = jwt.verify(token, process.env.JWT_SECRET);
     } catch (err) {
       // token expired, etc. reissue token
-      attachNewJWT(res, email)
-        .status(200)
-        .send({
-          newUser: false,
-        });
+      return UserModel.removeAuthCookies(res)
+        .redirect('/signin');
     }
 
-    if (decoded.data.email !== email) {
+    if (decoded.data.id !== uId) {
       // issue new token
-      attachNewJWT(res, email)
+      return user.addAuthCookies(res)
         .status(200)
         .send({
           newUser: false,
         });
     } else {
       // they are already logged in..
-      res.status(200)
+      return res.status(200)
         .send({
           newUser: false,
         });
     }
-  } else if (user && !token) {
+  }
+
+  if (user && !token) {
     // issue a new token
-    attachNewJWT(res, email)
+    return user.addAuthCookies(res)
       .status(200)
       .send({
         newUser: false,
@@ -87,16 +72,13 @@ export default async function(req, res, next) {
   } else {
     // we dont have an account yet sign them up...
     signupUser({
-      email,
-      name,
+      email: email,
+      name: name,
       image: picture,
       id_token: idToken,
-    }).then(({token}) => {
-      res.status(200)
-        .cookie('token', token, new JwtCookieOptions())
-        .cookie('authenticated', 'true', new JwtCookieOptions(
-          {httpOnly: false}
-        ))
+    }).then(({user}) => {
+      return user.addAuthCookies(res)
+        .status(200)
         .send({
           newUser: true,
         });

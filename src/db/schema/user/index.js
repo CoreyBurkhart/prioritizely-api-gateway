@@ -1,9 +1,8 @@
 import mongoose from 'mongoose';
 import validator from 'validator';
-
-const options = {
-  timestamps: true,
-};
+import options from './options';
+import * as statics from './statics';
+import * as methods from './methods';
 
 const UserSchema = new mongoose.Schema({
   email: {
@@ -40,18 +39,7 @@ const UserSchema = new mongoose.Schema({
   },
 }, options);
 
-UserSchema.statics.validatePassword = function(pass, minLength = 7,
-  maxLength = 100) {
-  return pass.length > minLength && pass.length < maxLength;
-};
-
-UserSchema.statics.findByEmail = function(email) {
-  return this.findOne({email});
-};
-
-UserSchema.methods.isUnique = async function() {
-  const user = await this.constructor.findByEmail(this.email);
-  return user === null;
-};
+UserSchema.statics = statics;
+UserSchema.methods = methods;
 
 export default UserSchema;

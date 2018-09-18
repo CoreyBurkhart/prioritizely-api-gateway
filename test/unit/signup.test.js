@@ -37,7 +37,9 @@ describe('User Signup Flow', () => {
         expect(/token=.+;/i.test(res.header['set-cookie'])).toBe(true);
         expect(/httpOnly/i.test(res.header['set-cookie'])).toBe(true);
         expect(res.status).toBe(200);
-        expect(res.body).toEqual(signupPayload);
+        expect(res.body).toEqual(expect.objectContaining({
+          newUser: expect.any(Boolean)
+        }))
         done();
       });
   });

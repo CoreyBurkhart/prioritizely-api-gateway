@@ -2,8 +2,7 @@
 
 import UserModel from '../../../db/models/User';
 import bcrypt from 'bcrypt';
-import {createJWT, respondInvalidCred} from '../../../lib/auth';
-import JwtCookieOptions from './../../../lib/classes/JwtCookieOptions';
+import {respondInvalidCred} from '../../../lib/auth';
 
 /**
  * FULL ROUTE: POST /api/signin
@@ -30,18 +29,9 @@ export default async function(req, res, next) {
 
     if (passwordsMatch) {
       // success
-      const token = createJWT({
-        email: credentials.email,
-      });
-
-      if (token) {
-        res.status(200)
-          .cookie('token', token, new JwtCookieOptions())
-          .cookie('authenticated', 'true', new JwtCookieOptions(
-            {httpOnly: false}
-          ))
-          .send(true);
-      }
+      user.addAuthCookies(res)
+        .status(200)
+        .send(true);
     } else {
       respondInvalidCred(res);
     }

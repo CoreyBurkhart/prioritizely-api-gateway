@@ -27,7 +27,8 @@ export default function(req, res, next) {
 
   if (token) {
     try {
-      jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      req.decoded_jwt = decoded;
       next();
     } catch (e) {
       return clearAndRedirect(res);

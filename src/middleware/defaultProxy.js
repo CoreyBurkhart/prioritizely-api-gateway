@@ -19,6 +19,7 @@ const options = {
    */
   onProxyReq(proxyReq, req, res) {
     const {token} = req.cookies;
+    console.info(`${req.method} ${req.path} proxied`);
     proxyReq.setHeader(
       'x-user-email',
       (jwt.verify(token, process.env.JWT_SECRET)).data.email

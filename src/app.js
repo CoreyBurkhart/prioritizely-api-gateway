@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import authRouter from './routers/auth';
+import adminRouter from './routers/admin';
 import morganMiddleware from './middleware/morgan';
 import bodyParserMiddleware from './middleware/bodyParser';
 import cookieParserMiddleware from './middleware/cookieParser';
@@ -32,11 +33,12 @@ app.use(/\/api(?!\/auth)/, authMiddleware);
  * routers
  */
 app.use('/api/auth', authRouter);
+app.use('/api/admin', adminRouter);
 
 /*
  * proxy
  */
-app.use(/\/api(?!\/auth)/, defaultProxy);
+app.use(/\/api\/(?!(admin|auth)).+/, defaultProxy);
 
 /*
  * error middleware (must be last call to app.use)

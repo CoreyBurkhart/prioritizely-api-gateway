@@ -1,8 +1,6 @@
 /* eslint new-cap: 0 */
 
-import JwtCookieOptions from '../../../lib/classes/JwtCookieOptions';
 import signup from './signup';
-
 
 /**
  * FULL ROUTE: POST /api/auth/signup
@@ -15,13 +13,12 @@ import signup from './signup';
  */
 export default async function(req, res) {
   signup(req.body)
-    .then(({token}) => {
-      res.status(200)
-        .cookie('token', token, new JwtCookieOptions())
-        .cookie('authenticated', 'true', new JwtCookieOptions(
-          {httpOnly: false}
-        ))
-        .send(req.body);
+    .then(({user}) => {
+      user.addAuthCookies(res)
+        .status(200)
+        .send({
+          newUser: true,
+        });
     })
     .catch(({messages, status}) => {
       res.status(status)

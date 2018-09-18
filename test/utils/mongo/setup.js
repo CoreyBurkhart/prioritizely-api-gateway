@@ -12,7 +12,7 @@ module.exports = async function() {
   const mongoConfig = {
     mongoDBName: 'jest',
     mongoUri: await mongoServer.getConnectionString(),
-  };
+  };  
 
   // Write global config to disk because all tests run in different contexts.
   fs.writeFileSync(globalConfigPath, JSON.stringify(mongoConfig));
