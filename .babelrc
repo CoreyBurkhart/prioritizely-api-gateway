@@ -6,5 +6,12 @@
         "node": "current"
       }
     }
-  ]]
+  ]],
+  "plugins": [
+    ["module-resolver", {
+      "alias": {
+        "@": "./src"
+      }
+    }]
+  ]
 }
